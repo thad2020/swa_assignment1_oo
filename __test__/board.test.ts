@@ -264,7 +264,6 @@ describe("Board", () => {
                     'C', 'D', 'D',
                 ).withPieces('B', 'C', 'D')
             })
-
             it("shifts tiles down before replacing", () => {
                 generator.prepare('B', 'C', 'D')
                 require(Board.move(generator, board, {row: 2, col: 0}, {row: 3, col: 0}).board).toMatch(
@@ -274,7 +273,6 @@ describe("Board", () => {
                     'C', 'A', 'C',
                 ).withPieces('B', 'C', 'D')
             })
-
             it("shifts tiles down before replacing multiple matches", () => {
                 generator.prepare('D', 'B', 'C', 'A', 'B', 'A')
                 require(Board.move(generator, board, {row: 3, col: 0}, {row: 3, col: 2}).board).toMatch(
@@ -284,7 +282,6 @@ describe("Board", () => {
                     'A', 'D', 'A',
                 ).withPieces('A', 'A', 'B', 'B', 'C', 'D')
             })
-
             it("only deletes a double match once", () => {
                 generator = new GeneratorFake<String>(
                     'D', 'B', 'A',
@@ -322,7 +319,6 @@ describe("Board", () => {
                 const { effects } = Board.move(generator, board, {row: 0, col: 1}, {row: 2, col: 1})
                 expect(effects[effects.length - 1].kind).toEqual('Refill')
             })
-
             it("fires nothing with no matches", () => {
                 generator.prepare('C', 'D', 'A', 'C', 'D', 'A', 'C', 'D', 'A')
                 expect(Board.move(generator, board, {row: 0, col: 0}, {row: 0, col: 0}).effects).toEqual([])

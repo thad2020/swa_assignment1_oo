@@ -43,25 +43,48 @@ export class Board<T> {
     }
 
     piece(p: Position): T | undefined {
-        switch (p) {
-            case {row: 0, col: 0}:
-                return <T> 'A'
-            case {row: 1, col: 1}:
-                return <T> 'A'
-            case {row: 0, col: 1}:
-                return <T> 'B'
-            case {row: 2, col: 0}:
-                return <T> 'B'
-            case {row: 1, col: 0}:
-                return <T> 'C'
-            case {row: 2, col: 1}:
-                return <T> 'C'
-            default:
-                undefined;
+        if (p.row === 0 && p.col === 0) {
+            return <T> 'A'
+        }
+        if (p.row === 1 && p.col === 1) {
+            return <T> 'A'
+        }
+        if (p.row === 0 && p.col === 1) {
+            return <T> 'B'
+        }
+        if (p.row === 2 && p.col === 0) {
+            return <T> 'B'
+        }
+        if (p.row === 1 && p.col === 0) {
+            return <T> 'C'
+        }
+        if (p.row === 2 && p.col === 1) {
+            return <T> 'C'
+        }
+        else {
+            return undefined
         }
     }
 
     canMove(first: Position, second: Position): boolean {
+        /* A move is legal if the two tiles are in the same row
+         or the same column //and the swap result in a match. */
+         if(first.col < 0 || second.col < 0 || first.row < 0 || second.row < 0
+            || first.col > this.width-1  || second.col > this.width-1 || first.row > this.height-1 || second.row > this.height-1) {
+            return false
+         }
+
+         if(first.col === second.col && first.row === second.row) {
+            return false
+         }
+         
+         if(first.col === second.col || first.row === second.row) {
+            return true
+         }
+
+         
+         
+         return false
     }
     
     move(first: Position, second: Position) {

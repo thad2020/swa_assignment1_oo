@@ -22,14 +22,14 @@ export class Board<T> {
     readonly width: number
     readonly height: number
     readonly generator: Generator<T>
-    pieces: T[];
+    boardPositions: Position[] = []
 
     // Constructor here
     constructor(generator, width, height) {
         this.width = width;
         this.height = height;
-        this.pieces = [];
-        this.setPiece(generator, width, height);
+        this.generator = generator;
+        this.boardPositions = this.positions();
     }
 
     addListener(listener: BoardListener<T>) {
@@ -42,21 +42,19 @@ export class Board<T> {
                 array.push({ row: i, col: j })
             }
         };
+
         return array;
     }
 
     piece(p: Position): T | undefined {
         let returnValue = undefined;
-        let i = 0;
 
         this.positions().forEach(element => {
-            const value = this.pieces[i];
+            const value = this.generator.next();
 
             if (element.row === p.row && element.col === p.col) {
                 returnValue = <T> value
             }
-
-            i++;
         });
         
         return returnValue
@@ -83,26 +81,23 @@ export class Board<T> {
     
     move(first: Position, second: Position) {
         if(this.canMove(first, second)) {
-            const firstValue = this.piece(first);
-            const secondValue = this.piece(second);
 
-            this.positions().forEach(element => {
-                if (element.row === first.row && element.col === first.col) {
-                    this.pieces[element.row * this.width + element.col] = secondValue
+            const firstValue = first;
+            const secondValue = second;
+
+            let newPositions: Position[] = [];
+
+            for(let i = 0; i < this.boardPositions.length; i++) {
+                if (this.boardPositions[i].row === first.row && this.boardPositions[i].col === first.col) {
+                    newPositions.push(second)
+                } else if (this.boardPositions[i].row === second.row && this.boardPositions[i].col === second.col) {
+                    newPositions.push(first)
+                } else {
+                    newPositions.push(this.boardPositions[i])
                 }
-                if (element.row === second.row && element.col === second.col) {
-                    this.pieces[element.row * this.width + element.col] = firstValue
-                }
-            });
-        }
-    }
+            }
 
-    setPiece(generated: Generator<T>, width: number, height: number) {
-        for (let i = 0; i < width * height; i++) {
-            console.log(i)
-            this.pieces.push(generated.next())
+            this.boardPositions = newPositions;
         }
-
-        console.log(this.pieces)
     }
 }

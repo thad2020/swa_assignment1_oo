@@ -5,13 +5,18 @@ export type Position = {
     col: number
 }
 
-export type Match<T> = {
+export type Match<T> = BoardEvent<T> & {
     matched: T,
     positions: Position[]
 }
 
-export type BoardEvent<T> = {
+export type Refill<T> = BoardEvent<T>  & {
 
+}
+
+export type BoardEvent<T> = {
+    kind: string
+   // { kind: ‘Match’, match: { matched: ‘A’, positions: [{row: 0, col: 0}, {row: 0, col: 1},{row: 0, col: 2}]}}
 };
 
 export type BoardListener<T> = {
@@ -72,11 +77,56 @@ export class Board<T> {
             return false
          }
          
-         if(first.col === second.col || first.row === second.row) {
-            return true
-         }
+         if(first.col === second.col || first.row === second.row &&
+                this.hasMatch(second ,this.piece(first)) || this.hasMatch(first, this.piece(second)))
+              { 
+                return true}
+         
 
          return false
+    }
+
+    hasMatch(pos: Position, type: T): boolean {
+        var horizLen = 1;
+        
+        //Check left
+        var i = pos.col-1
+       // let position: Position =  {row: pos.row, col:i};
+        while(i >= 0 && this.piece({row: pos.row, col:i}) == type)
+        {
+            i -= 1
+            horizLen += 1
+        }
+        
+        // right
+        i = pos.col + 1
+        while(i < this.width && this.piece({row: pos.row, col:i}) == type)
+        {
+            i += 1
+            horizLen += 1
+        }
+        if (horizLen >= 3 )
+        {return true}
+
+        // Collonetjek
+        var vertLen = 1
+
+        // Ned
+        i = pos.row -1
+        while(i >= 0 && this.piece({row: i, col: pos.col}) == type)
+        {
+            i -= 1
+            vertLen += 1
+        }
+
+        // OP!
+        i = pos.row + 1
+        while(i < this.height && this.piece({row: i, col: pos.col}) == type)
+        {
+            i += 1
+            vertLen += 1
+        }
+        return vertLen >= 3
     }
     
     move(first: Position, second: Position) {
